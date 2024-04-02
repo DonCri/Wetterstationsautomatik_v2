@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <style>
+            /* Style the tab */
+            .tab {
+                overflow: hidden;
+                border: none;
+                border-bottom: none;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+            /* Style the buttons that are used to open the tab content */
+            .tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                border-radius: 8px;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.5s;
+                color: currentColor;
+                font-weight: bold;
+            }
+            .tab button.active, .tab button:focus {
+                background-color: rgb(43, 255, 0);
+                color: black;
+            }
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: rgb(43, 255, 0);
+                color: black;
+            }
+            .tabcontent {
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+            #statusButtonSun, #Alerts button {
+                border-width: 0;
+                outline: none;
+                border-radius: 4px;
+                width: 40px;
+                height: 20px;
+                color: black;
+            }
+            #statusButtonRepeatAfterWind {
+                border-width: 0;
+                outline: none;
+                border-radius: 4px;
+                width: 40px;
+                height: 20px;
+            }
+            #statusButtonRepeatAfterRain {
+                border-width: 0;
+                outline: none;
+                border-radius: 4px;
+                width: 40px;
+                height: 20px;
+            }
+            .tabcontent input {
+                max-width: 35%;
+                text-align: right;
+                font-size: small;
+            }
+            #aussendiv { 
+                display: flex; 
+                justify-content: space-between;
+                max-width: 80%;
+            }
+            .innendiv { 
+                width: 50%; 
+                padding: 5px;
+            }
+            .innendiv2 {
+                width: 30%;
+                padding: 5px;
+                text-align: right;
+            }
+            .innendiv3 {
+                width: 10%;
+                padding: 5px;
+                text-align: right;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Tablinks --> 
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'Alerts')" id="defaultOpen">Alarme</button>
+            <button class="tablinks" onclick="openTab(event, 'Wind')">Wind</button>
+            <button class="tablinks" onclick="openTab(event, 'Sun')">Beschattung</button>
+            <button class="tablinks" onclick="openTab(event, 'Rain')">Regen</button>
+        </div>
+        <!--Tab content -->
+        <div id="Alerts" class="tabcontent">
+            <div id="aussendiv">
+                <div class="innendiv"><h3>Alarme</h3></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="BeschattungsstatusName"></div>
+                <div class="innendiv"><button class="open-button" id="Beschattungsstatus" disabled></button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="WindstatusName"></div>
+                <div class="innendiv"><button class="open-button" id="Windstatus" disabled></button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="RegenstatusName"></div>
+                <div class="innendiv"><button class="open-button" id="Regenstatus" disabled></button></div>
+            </div>
+        </div>
+        <div id="Wind" class="tabcontent">
+            <div id="aussendiv">
+                <div class="innendiv"><h3>Windeinstellungen</h3></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="WindSollObenName"></div>
+                <div class="innendiv2"><input type="text" id="WindSollOben" readonly><span id="WindSollObenSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonWindSollOben" class="open-button" onclick="edit('WindSollOben')">Edit</button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="WindSollUntenName"></div>
+                <div class="innendiv2"><input type="text" id="WindSollUnten" readonly><span id="WindSollUntenSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonWindSollUnten" class="open-button" onclick="edit('WindSollUnten')">Edit</button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="BeschattungWiederholenName"></div>
+                <div class="innendiv2">
+                    <button id="statusButtonRepeatAfterWind" onclick="requestAction('BeschattungWiederholen', !stateValueRepeat)"><span id="BeschattungWiederholen"></span></button>
+                </div>
+                <div class="innendiv3"></div>
+            </div>
+        </div>
+        <div id="Sun" class="tabcontent">
+            <div id="aussendiv">
+                <div class="innendiv"><h3>Beschattungseinstellungen</h3></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="StatusVariablenName"></div>
+                <div class="innendiv2"><button id="statusButtonSun" onclick="requestAction('Status', !stateValue)"><span id="Status"></span></button></div>
+                <div class="innendiv3"></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="LuxSollObenName"></div>
+                <div class="innendiv2"><input type="text" id="LuxSollOben" readonly><span id="LuxSollObenSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonLuxSollOben" class="open-button" onclick="edit('LuxSollOben')">Edit</button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="LuxSollUntenName"></div>
+                <div class="innendiv2"><input type="text" id="LuxSollUnten" readonly><span id="LuxSollUntenSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonLuxSollUnten" class="open-button" onclick="edit('LuxSollUnten')">Edit</button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="CurrentAzimutName"></div>
+                <div class="innendiv2" id="CurrentAzimut"></div>
+                <div class="innendiv3"></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="AzimutSollVonName"></div>
+                <div class="innendiv2"><input type="text" id="AzimutSollVon" readonly><span id="AzimutSollVonSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonAzimutSollVon" class="open-button" onclick="edit('AzimutSollVon')">Edit</button></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="AzimutSollBisName"></div>
+                <div class="innendiv2"><input type="text" id="AzimutSollBis" readonly><span id="AzimutSollBisSuffix"></span></div>
+                <div class="innendiv3"><button id="editbuttonAzimutSollBis" class="open-button" onclick="edit('AzimutSollBis')">Edit</button></div>
+            </div>
+        </div>
+        <div id="Rain" class="tabcontent">
+            <div id="aussendiv">
+                <div class="innendiv"><h3>Regeneinstellungen</h3></div>
+            </div>
+            <div id="aussendiv">
+                <div class="innendiv" id="BeschattungWiederholen2Name"></div>
+                <div class="innendiv2">
+                    <button id="statusButtonRepeatAfterRain" onclick="requestAction('BeschattungWiederholen2', !stateValueRepeat2)"><span id="BeschattungWiederholen2"></span></button>
+                </div>
+                <div class="innendiv3"></div>
+            </div>
+        </div>
+
+        <script type="text/javascript" charset="UTF-8">
+            // Get the element with id="defaultOpen" and click on it
+            document.getElementById("defaultOpen").click();
+            // Edit value
+            img = {};
+            idents = [];
+            function edit(Ident) {
+                if(document.getElementById(Ident).readOnly == true) {
+                    document.getElementById('editbutton' + Ident).innerText = "Save";
+                    document.getElementById(Ident).readOnly = false;
+                } else {
+                    document.getElementById('editbutton' + Ident).innerText = "Edit";
+                    document.getElementById(Ident).readOnly = true;
+                    requestAction(Ident, document.getElementById(Ident).value);
+                }
+                
+            }
+
+            // Tab
+            function openTab(evt, tabName) {
+                // Declare all variables
+                var i, tabcontent, tablinks;
+
+                // Get all elements with class="tabcontent" and hide them
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+
+                // Get all elements with class="tablinks" and remove the class "active"
+                tablinks = document.getElementsByClassName("tablinks");
+                console.log(tablinks);
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+
+            function decimalToRgb(decimal) {
+                return {
+                    red: (decimal >> 16) & 0xff,
+                    green: (decimal >> 8) & 0xff,
+                    blue: decimal & 0xff,
+                };
+            }
+            
+            // handle controller messages
+            function handleMessage(message) {
+                var data = JSON.parse(message);
+
+                img = {
+                    0: window.assets.img_save,
+                    1: window.assets.img_edit
+                };
+
+                function setColorSwitch(object, ident, associations) {
+                    colorActiv = associations[1]["Color"];
+                    colorInactiv = associations[0]["Color"];
+
+                    if(object) {
+                        document.getElementById(ident).style.backgroundColor = "rgb(" + decimalToRgb(colorActiv).red + ", " + decimalToRgb(colorActiv).green + ", " + decimalToRgb(colorActiv).blue + ")";
+                    } else if (colorInactiv == -1 ) {
+                        document.getElementById(ident).style.backgroundColor = "red";
+                    } else {
+                        document.getElementById().style.backgroundColor = "rgb(" + decimalToRgb(colorInactiv).red + ", " + decimalToRgb(colorInactiv).green + ", " + decimalToRgb(colorInactiv).blue + ")";
+                    }
+                }
+
+                function setColorAlerts(object, ident, associations) {
+                    colorActiv = associations[1]["Color"];
+                    colorInactiv = associations[0]["Color"];
+
+                    if(object) {
+                        document.getElementById(ident).style.backgroundColor = "rgb(" + decimalToRgb(colorActiv).red + ", " + decimalToRgb(colorActiv).green + ", " + decimalToRgb(colorActiv).blue + ")";
+                    } else if (colorInactiv == -1 ) {
+                        document.getElementById(ident).style.backgroundColor = "transparent";
+                    } else {
+                        document.getElementById().style.backgroundColor = "rgb(" + decimalToRgb(colorInactiv).red + ", " + decimalToRgb(colorInactiv).green + ", " + decimalToRgb(colorInactiv).blue + ")";
+                    }
+                }
+
+                // document.getElementById('editsaveicon').src = img[1];
+
+                switch (data.Ident) {
+                    case "Status":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('StatusVariablenName').innerText = data.Name;
+                        document.getElementById('Status').innerText = currentName;
+                        stateValue = data.Value
+                        setColorSwitch(stateValue, 'statusButtonSun', data.Associations);
+                        break;
+                    case "BeschattungWiederholen":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('BeschattungWiederholenName').innerText = data.Name;
+                        document.getElementById('BeschattungWiederholen').innerText = currentName;
+                        stateValueRepeat = data.Value;
+                        setColorSwitch(stateValueRepeat, 'statusButtonRepeatAfterWind', data.Associations);
+                        break;
+                    case "BeschattungWiederholen2":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('BeschattungWiederholen2Name').innerText = data.Name;
+                        document.getElementById('BeschattungWiederholen2').innerText = currentName;
+                        stateValueRepeat2 = data.Value;
+                        setColorSwitch(stateValueRepeat2, 'statusButtonRepeatAfterRain', data.Associations);
+                        break;
+                    case "LuxSollOben":
+                        document.getElementById('LuxSollObenName').innerText = data.Name;
+                        document.getElementById('LuxSollObenSuffix').innerText = data.Suffix;
+                        document.getElementById('LuxSollOben').value = data.Value;   
+                        break;
+                    case "LuxSollUnten":
+                        document.getElementById('LuxSollUntenName').innerText = data.Name;
+                        document.getElementById('LuxSollUntenSuffix').innerText = data.Suffix;
+                        document.getElementById('LuxSollUnten').value = data.Value;   
+                        break;
+                    case "AzimutSollVon":
+                        document.getElementById('AzimutSollVonName').innerText = data.Name;
+                        document.getElementById('AzimutSollVonSuffix').innerText = data.Suffix;
+                        document.getElementById('AzimutSollVon').value = data.Value;   
+                        break;
+                    case "AzimutSollBis":
+                        document.getElementById('AzimutSollBisName').innerText = data.Name; 
+                        document.getElementById('AzimutSollBisSuffix').innerText = data.Suffix;
+                        document.getElementById('AzimutSollBis').value = data.Value;   
+                        break;
+                    case "CurrentAzimut":
+                        document.getElementById('CurrentAzimutName').innerText = data.Name;
+                        document.getElementById('CurrentAzimut').innerText = parseFloat(data.Value).toFixed(2) + data.Suffix;   
+                        break;
+                    case "Beschattungsstatus":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('BeschattungsstatusName').innerText = data.Name;  
+                        document.getElementById('Beschattungsstatus').innerText = currentName;   
+                        setColorAlerts(data.Value, 'Beschattungsstatus', data.Associations);
+                        break;
+                    case "WindSollOben":
+                        document.getElementById('WindSollObenName').innerText = data.Name;
+                        document.getElementById('WindSollObenSuffix').innerText = data.Suffix;
+                        document.getElementById('WindSollOben').value = data.Value;
+                        break;
+                    case "WindSollUnten":
+                        document.getElementById('WindSollUntenName').innerText = data.Name;
+                        document.getElementById('WindSollUntenSuffix').innerText = data.Suffix;
+                        document.getElementById('WindSollUnten').value = data.Value;   
+                        break;
+                    case "Windstatus":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('WindstatusName').innerText = data.Name; 
+                        document.getElementById('Windstatus').innerText = currentName;  
+                        setColorAlerts(data.Value, 'Windstatus', data.Associations); 
+                        break;
+                    case "Regenstatus":
+                        var currentName = data.Value ? data.Associations[1]["Name"] : data.Associations[0]["Name"];
+                        document.getElementById('RegenstatusName').innerText = data.Name; 
+                        document.getElementById('Regenstatus').innerText = currentName;   
+                        setColorAlerts(data.Value, 'Regenstatus', data.Associations);
+                        break;
+                }
+                console.log(data);
+            }
+            handleMessage();
+        </script>
+        

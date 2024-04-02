@@ -1,0 +1,14 @@
+{
+    "id": "{580F1640-5084-190E-7DEE-174B0A61C69F}",
+    "name": "Wetterstationsautomatik_v2",
+    "type": 3,
+    "vendor": "BRELAG",
+    "aliases":
+        [
+            "Brelag Wetterstationsautomatik_v2"
+        ],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "BRELAG"
+}

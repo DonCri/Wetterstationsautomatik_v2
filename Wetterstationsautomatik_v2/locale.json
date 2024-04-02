@@ -1,0 +1,12 @@
+{
+    "translations": {
+        "de": {
+            "On": "Ja",
+            "Off": "Nein",
+            "Alarm-On": "Aktiv",
+            "Alarm-Off": "Inaktiv",
+            "Beschattung-On": "Aktiv",
+            "Beschattung-Off": "Inaktiv"
+        }
+    }
+}
